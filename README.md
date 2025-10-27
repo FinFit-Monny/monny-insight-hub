@@ -71,3 +71,11 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Backend Integration
+
+- Endpoint: `/get-company-dashboard-data?userId={clerkUserId}`
+- Auth: `Authorization: Bearer <Clerk token>`
+- Env: `VITE_API_BASE_URL` (optional; defaults to same-origin)
+
+The dashboard fetches this endpoint on load via React Query in `src/viewmodels/useDashboardViewModel.ts` and hydrates UI components.

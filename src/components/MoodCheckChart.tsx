@@ -1,23 +1,24 @@
 import { Card } from "@/components/ui/card";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, YAxis } from "recharts";
+import { useTranslation } from 'react-i18next';
 
-const moodData = [
-  { mood: "😰", label: "Stressed", count: 456, color: "hsl(var(--chart-5))" },
-  { mood: "😟", label: "Worried", count: 892, color: "hsl(var(--chart-4))" },
-  { mood: "😊", label: "Confident", count: 2134, color: "hsl(var(--chart-3))" },
-  { mood: "🤩", label: "Very Confident", count: 1408, color: "hsl(var(--chart-1))" },
-];
+interface MoodItem { mood: string; label: string; count: number; color: string }
 
-export const MoodCheckChart = () => {
+interface Props {
+  data: MoodItem[];
+}
+
+export const MoodCheckChart = ({ data }: Props) => {
+  const { t } = useTranslation();
   return (
     <Card className="p-6">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-foreground mb-1">Money Confidence Mood Check</h3>
-        <p className="text-sm text-muted-foreground">How users feel about their finances</p>
+        <h3 className="text-lg font-semibold text-foreground mb-1">{t('cards.moodCheck.title')}</h3>
+        <p className="text-sm text-muted-foreground">{t('cards.moodCheck.subtitle')}</p>
       </div>
       
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={moodData}>
+        <BarChart data={data}>
           <YAxis 
             stroke="hsl(var(--muted-foreground))"
             fontSize={12}
@@ -29,7 +30,7 @@ export const MoodCheckChart = () => {
               borderRadius: "var(--radius)",
             }}
             formatter={(value: number, name: string, props: any) => [
-              `${value.toLocaleString()} users`,
+              `${value.toLocaleString()} ${t('cards.moodCheck.users')}`,
               props.payload.label
             ]}
           />
@@ -42,7 +43,7 @@ export const MoodCheckChart = () => {
       </ResponsiveContainer>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        {moodData.map((item) => (
+        {data.map((item) => (
           <div key={item.label} className="text-center">
             <div className="text-3xl mb-1">{item.mood}</div>
             <div className="text-sm font-medium text-foreground">{item.count.toLocaleString()}</div>

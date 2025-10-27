@@ -1,0 +1,62 @@
+{
+  "header": {
+    "title": "Monny Dashboard",
+    "company": "{{company}}",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "protected": "Protected",
+    "language": "Language"
+  },
+  "common": {
+    "loading": "Loading...",
+    "users": "users",
+    "vsLastMonth": "vs last month"
+  },
+  "cards": {
+    "userGrowth": {
+      "title": "User Growth",
+      "subtitle": "Total active users"
+    },
+    "enrolmentRate": {
+      "title": "Enrolment Rate",
+      "subtitle": "{{enrolled}} of {{total}} employees"
+    },
+    "coachingSessions": {
+      "title": "Coaching Sessions",
+      "subtitle": "Human budget coaching provided",
+      "total": "Total sessions provided"
+    },
+    "moodCheck": {
+      "title": "Money Confidence Mood Check",
+      "subtitle": "How users feel about their finances",
+      "stressed": "Stressed",
+      "worried": "Worried",
+      "confident": "Confident",
+      "veryConfident": "Very Confident",
+      "users": "users"
+    },
+    "stat": {
+      "totalUsers": "Total Users",
+      "bankAccountsConnected": "Bank Accounts Connected",
+      "bankAccountsConnectedSubtitle": "{{count}} users connected",
+      "monthlyActiveUsers": "Monthly Active Users",
+      "monthlyActiveUsersSubtitle": "{{percent}} of total users"
+    }
+  },
+  "errors": {
+    "404": "404",
+    "pageNotFound": "Oops! Page not found",
+    "returnHome": "Return to Home"
+  },
+  "protected": {
+    "loginRequiredTitle": "Login Required",
+    "loginRequiredDescription": "You must be logged in to access this content."
+  },
+  "access": {
+    "notAdminTitle": "Access Restricted",
+    "notAdminDescription": "You are not an administrator and therefore cannot view this dashboard.",
+    "notAdminContact": "Please contact your administrator if you believe this is an error."
+  }
+}
+
+

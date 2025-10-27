@@ -1,31 +1,30 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from 'react-i18next';
 
-const data = [
-  { month: "Jan", users: 1245 },
-  { month: "Feb", users: 1567 },
-  { month: "Mar", users: 1892 },
-  { month: "Apr", users: 2234 },
-  { month: "May", users: 2789 },
-  { month: "Jun", users: 3456 },
-  { month: "Jul", users: 4123 },
-  { month: "Aug", users: 4890 },
-];
+type Point = { month: string; users: number };
 
-export const UserGrowthChart = () => {
-  const currentUsers = data[data.length - 1].users;
-  const previousUsers = data[data.length - 2].users;
-  const growthPercentage = (((currentUsers - previousUsers) / previousUsers) * 100).toFixed(1);
+interface Props {
+  data: Point[];
+  currentUsers: number;
+  previousUsers: number;
+  growthPercentage: number | string;
+}
+
+export const UserGrowthChart = ({ data, currentUsers, previousUsers, growthPercentage }: Props) => {
+  const { t } = useTranslation();
 
   return (
     <Card className="p-6 h-full">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-foreground mb-1">User Growth</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-1">{t('cards.userGrowth.title')}</h3>
         <div className="flex items-baseline gap-3">
           <span className="text-4xl font-bold text-foreground">{currentUsers.toLocaleString()}</span>
-          <span className="text-lg font-semibold text-accent">+{growthPercentage}%</span>
+          {growthPercentage > 0 && (
+            <span className="text-lg font-semibold text-accent">+{typeof growthPercentage === 'string' ? growthPercentage : growthPercentage.toFixed(1)}%</span>
+          )}
         </div>
-        <p className="text-sm text-muted-foreground mt-1">Total active users</p>
+        <p className="text-sm text-muted-foreground mt-1">{t('cards.userGrowth.subtitle')}</p>
       </div>
       
       <ResponsiveContainer width="100%" height={280}>

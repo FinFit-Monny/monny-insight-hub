@@ -1,0 +1,62 @@
+{
+  "header": {
+    "title": "Monny Dashboard",
+    "company": "{{company}}",
+    "signIn": "Inloggen",
+    "signOut": "Uitloggen",
+    "protected": "Beveiligd",
+    "language": "Taal"
+  },
+  "common": {
+    "loading": "Laden...",
+    "users": "gebruikers",
+    "vsLastMonth": "t.o.v. vorige maand"
+  },
+  "cards": {
+    "userGrowth": {
+      "title": "Gebruikersgroei",
+      "subtitle": "Totaal actieve gebruikers"
+    },
+    "enrolmentRate": {
+      "title": "Aanmeldingsgraad",
+      "subtitle": "{{enrolled}} van {{total}} medewerkers"
+    },
+    "coachingSessions": {
+      "title": "Coachsessies",
+      "subtitle": "Persoonlijke budgetcoaching geleverd",
+      "total": "Totaal aantal sessies"
+    },
+    "moodCheck": {
+      "title": "Financieel Vertrouwen Check",
+      "subtitle": "Hoe gebruikers zich voelen over hun financiën",
+      "stressed": "Gestrest",
+      "worried": "Bezorgd",
+      "confident": "Zelfverzekerd",
+      "veryConfident": "Zeer Zelfverzekerd",
+      "users": "gebruikers"
+    },
+    "stat": {
+      "totalUsers": "Totaal gebruikers",
+      "bankAccountsConnected": "Gekoppelde bankrekeningen",
+      "bankAccountsConnectedSubtitle": "{{count}} gebruikers gekoppeld",
+      "monthlyActiveUsers": "Maandelijks actieve gebruikers",
+      "monthlyActiveUsersSubtitle": "{{percent}} van alle gebruikers"
+    }
+  },
+  "errors": {
+    "404": "404",
+    "pageNotFound": "Oeps! Pagina niet gevonden",
+    "returnHome": "Terug naar start"
+  },
+  "protected": {
+    "loginRequiredTitle": "Inloggen vereist",
+    "loginRequiredDescription": "Je moet ingelogd zijn om deze inhoud te bekijken."
+  },
+  "access": {
+    "notAdminTitle": "Toegang Beperkt",
+    "notAdminDescription": "Je bent geen beheerder en kunt dit dashboard daarom niet bekijken.",
+    "notAdminContact": "Neem contact op met je beheerder als je denkt dat dit een fout is."
+  }
+}
+
+
