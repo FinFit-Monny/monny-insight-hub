@@ -45,8 +45,7 @@ export const MoodCheckChart = ({ data }: Props) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
         {data.map((item) => (
           <div key={item.label} className="text-center">
-            <div className="text-3xl mb-1">{item.mood}</div>
-            <div className="text-sm font-medium text-foreground">{item.count.toLocaleString()}</div>
+            <div className="text-3xl mb-2">{item.mood}</div>
             <div className="text-xs text-muted-foreground">{item.label}</div>
           </div>
         ))}

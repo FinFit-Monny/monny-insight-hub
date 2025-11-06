@@ -18,7 +18,7 @@
       "subtitle": "Totaal actieve gebruikers"
     },
     "enrolmentRate": {
-      "title": "Aanmeldingsgraad",
+      "title": "Aanmeldingspercentage",
       "subtitle": "{{enrolled}} van {{total}} medewerkers"
     },
     "coachingSessions": {
