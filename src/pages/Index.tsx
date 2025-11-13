@@ -1,21 +1,46 @@
 import { Users, CreditCard } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { StatCard } from "@/components/StatCard";
 import { UserGrowthChart } from "@/components/UserGrowthChart";
 import { EnrolmentRate } from "@/components/EnrolmentRate";
 import { CoachingSessions } from "@/components/CoachingSessions";
 import { MoodCheckChart } from "@/components/MoodCheckChart";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import monnyLogo from "@/assets/monny-logo.png";
 import { UserButton, useUser } from "@clerk/clerk-react";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useDashboardViewModel, mapMoodScoreCountsToChart } from "@/viewmodels/useDashboardViewModel";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const { isSignedIn } = useUser();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data, isLoading, isError, isNotAdmin } = useDashboardViewModel();
   const companyName = data?.companyName || "";
+  const [uploads, setUploads] = useState<Array<{ createdAt: string; totalValid: number }>>([]);
+  const hasUploads = uploads.length > 0;
+  const normalizedLanguage = i18n.language.split('-')[0];
+  const locale = normalizedLanguage === 'nl' ? 'nl-NL' : 'en-US';
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("voucherUploads");
+      if (!raw) {
+        setUploads([]);
+        return;
+      }
+      const parsed = JSON.parse(raw) as Array<{ createdAt: string; totalValid: number }>;
+      if (Array.isArray(parsed)) {
+        setUploads(parsed);
+      } else {
+        setUploads([]);
+      }
+    } catch {
+      setUploads([]);
+    }
+  }, []);
   
   return (
     <div className="min-h-screen bg-background">
@@ -77,9 +102,9 @@ const Index = () => {
       {/* Main Content */}
       {!isNotAdmin && !isLoading && (
         <main className="container mx-auto px-4 py-8">
-        {/* Top Section: Main Chart + Enrolment Rate + Coaching Sessions */}
+        {/* Top Section: User Growth (left) with stats below + Voucher (right) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 flex flex-col gap-6">
             {data ? (
               <UserGrowthChart
                 data={data.userGrowth.monthlyData}
@@ -95,22 +120,90 @@ const Index = () => {
                 growthPercentage={0}
               />
             )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {data ? (
+                <EnrolmentRate
+                  totalEmployees={data.enrolment.totalEmployees}
+                  enrolledUsers={data.enrolment.enrolledUsers}
+                  enrolmentPercentage={data.enrolment.enrolmentPercentage}
+                />
+              ) : (
+                <EnrolmentRate totalEmployees={0} enrolledUsers={0} enrolmentPercentage={0} />
+              )}
+              {data ? (
+                <CoachingSessions totalSessions={data.coaching.totalSessions} />
+              ) : (
+                <CoachingSessions totalSessions={0} />
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-1 gap-6 h-full">
-            {data ? (
-              <EnrolmentRate
-                totalEmployees={data.enrolment.totalEmployees}
-                enrolledUsers={data.enrolment.enrolledUsers}
-                enrolmentPercentage={data.enrolment.enrolmentPercentage}
-              />
-            ) : (
-              <EnrolmentRate totalEmployees={0} enrolledUsers={0} enrolmentPercentage={0} />
-            )}
-            {data ? (
-              <CoachingSessions totalSessions={data.coaching.totalSessions} />
-            ) : (
-              <CoachingSessions totalSessions={0} />
-            )}
+          <div className="h-full flex flex-col">
+            <Card className="h-full flex flex-col">
+              {!hasUploads && (
+                <CardContent className="pt-6 flex items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-semibold">{t('voucher.cta.title')}</h2>
+                    <p className="text-sm text-muted-foreground">{t('voucher.cta.description')}</p>
+                  </div>
+                  <Button asChild>
+                    <Link to="/voucher-whitelist">{t('voucher.cta.button')}</Link>
+                  </Button>
+                </CardContent>
+              )}
+              {hasUploads && (
+                <CardContent className="pt-6 flex flex-col h-full">
+                  <div className="flex flex-col gap-4 flex-1">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <h2 className="text-lg font-semibold">{t('voucher.dashboard.panelTitle')}</h2>
+                        <p className="text-sm text-muted-foreground">{t('voucher.dashboard.panelDescription')}</p>
+                      </div>
+                      <Button asChild>
+                        <Link to="/voucher-whitelist">{t('voucher.dashboard.uploadButton')}</Link>
+                      </Button>
+                    </div>
+                    <div className="rounded-lg border p-4 flex-1 flex flex-col">
+                      <div className="flex flex-col gap-4">
+                        <div>
+                          <div className="text-sm text-muted-foreground">{t('voucher.code.label')}</div>
+                          <div className="mt-1 inline-flex items-center justify-center border rounded-md px-3 py-2 font-mono text-xl font-semibold tracking-widest uppercase">
+                            FAIRC
+                          </div>
+                        </div>
+                        <div className="flex-1 flex flex-col">
+                          <div className="text-sm font-medium mb-2">{t('voucher.dashboard.uploadsLabel')}</div>
+                          <div className="rounded-md border h-full">
+                            <div className="divide-y">
+                              {uploads.map((u, idx) => {
+                                const when = new Date(u.createdAt);
+                                const formatted = isNaN(when.getTime())
+                                  ? u.createdAt
+                                  : when.toLocaleString(locale, {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "2-digit",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    });
+                                return (
+                                  <div key={idx} className="flex items-center justify-between px-3 py-2 text-sm">
+                                    <div className="text-muted-foreground">{t('voucher.dashboard.uploadItemPrefix')} {idx + 1} • {formatted}</div>
+                                    <div className="font-medium">{u.totalValid} {t('common.users')}</div>
+                                  </div>
+                                );
+                              })}
+                              {uploads.length === 0 && (
+                                <div className="px-3 py-2 text-sm text-muted-foreground">{t('voucher.dashboard.emptyUploads')}</div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
           </div>
         </div>
 

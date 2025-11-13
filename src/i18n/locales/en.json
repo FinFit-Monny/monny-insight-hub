@@ -10,7 +10,109 @@
   "common": {
     "loading": "Loading...",
     "users": "users",
-    "vsLastMonth": "vs last month"
+    "vsLastMonth": "vs last month",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "confirm": "Confirm",
+    "close": "Close",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "voucher": {
+    "title": "Voucher Whitelist Portal",
+    "subtitle": "Upload and approve recipient emails",
+    "actions": {
+      "backToDashboard": "Back to dashboard"
+    },
+    "steps": {
+      "overview": "Overview & DPA",
+      "upload": "Upload list",
+      "review": "Review & confirm",
+      "code": "Voucher code"
+    },
+    "cta": {
+      "title": "Voucher Whitelist Portal",
+      "description": "Upload a list of recipient emails and get your company voucher code.",
+      "button": "Open portal"
+    },
+    "step1": {
+      "gdprTitle": "Fully GDPR compliant",
+      "gdprText": "Monny uses an SFTP solution which allows for the uploading of personal contact details within GDPR guidelines. Monny won't have direct access to email addresses or the ability to reach out to contacts uploaded here.",
+      "setupTitle": "Set up your access list",
+      "intro1": "Before you can share your voucher code, we need a list of the recipients who should get access to your offer. This can be your employees, clients, or any other group you work with.",
+      "intro2": "We’ll only use this list to check whether someone signing up with your voucher code is eligible.",
+      "intro3": "To stay fully GDPR-compliant, we convert every email address into an encrypted format as soon as you confirm the upload. We never store readable email addresses.",
+      "whatTitle": "What will happen",
+      "list1": "You provide a list of recipient email addresses.",
+      "list2": "We validate the file and show you a masked preview.",
+      "list3": "After you confirm, we store only the encrypted version of each email.",
+      "list4": "When someone signs up with your voucher code, we encrypt their email and check if it matches your list.",
+      "list5": "If it matches, they get access at the correct price.",
+      "dpaTitle": "Data Processing Agreement",
+      "dpaLead": "To continue, please accept our Data Processing Agreement. It explains how we handle data, your responsibilities, and your rights under GDPR.",
+      "checkbox": "I have read and accept the Data Processing Agreement.",
+      "viewDpa": "View DPA",
+      "dpaModalPlaceholder": "Full DPA text will be provided here in a future update."
+    },
+    "step2": {
+      "title": "Upload recipient list",
+      "subtitle": "Upload a CSV file or paste emails (one per line). Only emails are required.",
+      "uploadingGuidelinesTitle": "Uploading guidelines",
+      "uploadingGuidelinesText": "Upload a CSV or paste emails below. Use one email per line. You can start with a template.",
+      "downloadTemplate": "Download template",
+      "clickToUpload": "Click to upload",
+      "orDragHere": "or drag and drop here",
+      "maxSize": "Maximum size: 25 MB",
+      "fileLabel": "Upload CSV or TXT",
+      "selectedFile": "Selected file",
+      "fileHint": "Excel not supported directly; export to CSV or paste emails below.",
+      "textLabel": "Paste emails (one per line)",
+      "textPlaceholder": "john@example.com\njane@example.com",
+      "fileType": "CSV/TXT",
+      "orPasteLabel": "Or paste emails (one per line)",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "duplicates": "Duplicates",
+      "validationHint": "Add at least one valid email to continue."
+    },
+    "step3": {
+      "reviewInfoTitle": "Review",
+      "reviewInfoText": "You can review a masked preview below. Only encrypted email representations will be stored after confirmation.",
+      "title": "Review & confirm",
+      "subtitle": "Summary and masked preview before final confirmation.",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "duplicates": "Duplicates",
+      "preview": "Preview (masked)",
+      "noEmails": "No valid emails to show.",
+      "notice": "After confirmation, only encrypted email representations are kept. The raw emails will not be stored."
+    },
+    "code": {
+      "title": "Company Voucher Code",
+      "subtitle": "Share this code with your recipients",
+      "label": "Voucher code",
+      "copyError": "Could not copy. Please copy manually.",
+      "shareTitle": "Share the voucher",
+      "shareDesc": "Give this voucher code to the recipients who should get access (employees, clients, or cases).",
+      "recipientTitle": "Recipient signs up",
+      "recipientDesc": "They create an account with their email address and enter this voucher code in the app.",
+      "eligibilityTitle": "Automatic eligibility check",
+      "eligibilityDesc": "We convert their email into an encrypted format and compare it with the encrypted list you uploaded.",
+      "priceTitle": "If there’s a match, the price drops to €0.",
+      "privacyNote": "We never store readable email addresses.",
+      "howItWorks": "Recipients sign up in the app with their email and this voucher code. The system verifies if their email was included in your uploaded list.",
+      "summary": "You uploaded and confirmed",
+      "summaryEmails": "valid email(s)."
+    },
+    "dashboard": {
+      "panelTitle": "Voucher and uploads",
+      "panelDescription": "Overview of previous uploads and your voucher code.",
+      "uploadButton": "Upload Whitelist",
+      "uploadsLabel": "Uploads",
+      "emptyUploads": "No uploads found yet.",
+      "uploadItemPrefix": "Upload"
+    }
   },
   "cards": {
     "userGrowth": {
