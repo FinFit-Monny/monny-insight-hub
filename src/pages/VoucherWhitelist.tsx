@@ -17,7 +17,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Info, Shield, Upload, Trash2, FileSpreadsheet, Check } from "lucide-react";
+import { Info, Shield, Upload, Trash2, FileSpreadsheet, Check, Loader2 } from "lucide-react";
 
 const VoucherWhitelist = () => {
   const { t } = useTranslation();
@@ -30,6 +30,8 @@ const VoucherWhitelist = () => {
   const [validEmails, setValidEmails] = useState<string[]>([]);
   const [invalidEmails, setInvalidEmails] = useState<string[]>([]);
   const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
+  const [isAnonymising, setIsAnonymising] = useState(false);
+  const [hashedPreview, setHashedPreview] = useState<string[]>([]);
   const dropRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -45,6 +47,29 @@ const VoucherWhitelist = () => {
     if (raw === "2") setStep(2);
     if (raw === "1") setStep(1);
   }, [searchParams]);
+
+  // When entering step 2, pre-compute a truncated hashed preview of first 8 emails
+  useEffect(() => {
+    let cancelled = false;
+    async function computePreview() {
+      if (step !== 2 || validEmails.length === 0) {
+        setHashedPreview([]);
+        return;
+      }
+      try {
+        const hashes = await Promise.all(validEmails.slice(0, 8).map((e) => hashEmailSha256(e)));
+        if (!cancelled) {
+          setHashedPreview(hashes.map((h) => `${h.slice(0, 12)}…`));
+        }
+      } catch {
+        if (!cancelled) setHashedPreview([]);
+      }
+    }
+    computePreview();
+    return () => {
+      cancelled = true;
+    };
+  }, [step, validEmails]);
 
   async function onConfirm() {
     // Hash emails and persist in session for the code page to reference
@@ -331,57 +356,69 @@ const VoucherWhitelist = () => {
 
             {step === 2 && (
               <div className="space-y-6">
-                <div className="flex gap-3 items-start rounded-xl bg-[#f1f4fd] p-5">
-                  <div className="shrink-0">
-                    <div className="size-9 rounded-full grid place-items-center bg-primary/10 text-primary">
-                      <Info className="size-5" />
+                {isAnonymising ? (
+                  <div className="rounded-xl border p-8 bg-white flex flex-col items-center justify-center text-center gap-4">
+                    <Loader2 className="size-8 text-primary animate-spin" />
+                    <div className="text-base font-medium">Anonymising email adresses</div>
+                    <div className="text-xs text-muted-foreground">
+                      {t("voucher.step3.reviewInfoTextHashed", "We convert emails into encrypted hashes. We never store plain text emails.")}
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="text-sm font-medium text-primary">{t("voucher.step3.reviewInfoTitle")}</div>
-                    <div className="text-xs text-[#282828]">{t("voucher.step3.reviewInfoText")}</div>
-                  </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="flex gap-3 items-start rounded-xl bg-[#f1f4fd] p-5">
+                      <div className="shrink-0">
+                        <div className="size-9 rounded-full grid place-items-center bg-primary/10 text-primary">
+                          <Info className="size-5" />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-sm font-medium text-primary">{t("voucher.step3.reviewInfoTitle")}</div>
+                        <div className="text-xs text-[#282828]">{t("voucher.step3.reviewInfoTextHashed", "You can review a hashed preview below. Only encrypted email representations will be stored after confirmation.")}</div>
+                      </div>
+                    </div>
 
-                <div className="rounded-xl border p-4 space-y-3 bg-white">
-                  <div className="flex flex-wrap gap-4 text-sm">
-                    <div>{t("voucher.step3.valid")}: <span className="font-medium">{validEmails.length}</span></div>
-                    <div>{t("voucher.step3.invalid")}: <span className="font-medium">{invalidEmails.length}</span></div>
-                    <div>{t("voucher.step3.duplicates")}: <span className="font-medium">{duplicateEmails.length}</span></div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">{t("voucher.step3.preview")}</div>
-                    <ul className="mt-2 list-disc pl-5 text-sm">
-                      {validEmails.slice(0, 8).map((e) => (
-                        <li key={e}>{maskEmail(e)}</li>
-                      ))}
-                      {validEmails.length === 0 && <li className="text-muted-foreground">{t("voucher.step3.noEmails")}</li>}
-                    </ul>
-                  </div>
-                </div>
+                    <div className="rounded-xl border p-4 space-y-3 bg-white">
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        <div>{t("voucher.step3.valid")}: <span className="font-medium">{validEmails.length}</span></div>
+                        <div>{t("voucher.step3.invalid")}: <span className="font-medium">{invalidEmails.length}</span></div>
+                        <div>{t("voucher.step3.duplicates")}: <span className="font-medium">{duplicateEmails.length}</span></div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">{t("voucher.step3.previewHashed", "Preview (hashed)")}</div>
+                        <ul className="mt-2 list-disc pl-5 text-sm font-mono">
+                          {hashedPreview.map((h, idx) => (
+                            <li key={`${h}-${idx}`}>{h}</li>
+                          ))}
+                          {hashedPreview.length === 0 && <li className="text-muted-foreground">{t("voucher.step3.noEmails")}</li>}
+                        </ul>
+                      </div>
+                    </div>
 
-                <div className="rounded-md border p-4 bg-muted/30">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Checkbox id="accept-dpa" checked={acceptedDpa} onCheckedChange={(v) => setAcceptedDpa(Boolean(v))} />
-                    <Label htmlFor="accept-dpa" className="text-sm">
-                      {t("voucher.step1.checkbox")}
-                    </Label>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="link" className="px-0">{t("voucher.step1.viewDpa")}</Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>{t("voucher.step1.dpaTitle")}</DialogTitle>
-                          <DialogDescription>{t("voucher.step1.dpaModalPlaceholder")}</DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                          <Button>{t("common.close")}</Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </div>
+                    <div className="rounded-md border p-4 bg-muted/30">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Checkbox id="accept-dpa" checked={acceptedDpa} onCheckedChange={(v) => setAcceptedDpa(Boolean(v))} />
+                        <Label htmlFor="accept-dpa" className="text-sm">
+                          {t("voucher.step1.checkbox")}
+                        </Label>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="link" className="px-0">{t("voucher.step1.viewDpa")}</Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>{t("voucher.step1.dpaTitle")}</DialogTitle>
+                              <DialogDescription>{t("voucher.step1.dpaModalPlaceholder")}</DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                              <Button>{t("common.close")}</Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
@@ -394,7 +431,15 @@ const VoucherWhitelist = () => {
                   </Button>
                 )}
                 {step < 2 ? (
-                  <Button disabled={!canContinue} onClick={() => setStep(2)}>
+                  <Button
+                    disabled={!canContinue}
+                    onClick={() => {
+                      setStep(2);
+                      setIsAnonymising(true);
+                      // Show loader for 5 seconds to emphasize anonymisation
+                      window.setTimeout(() => setIsAnonymising(false), 5000);
+                    }}
+                  >
                     {t("common.next", "Next")}
                   </Button>
                 ) : (

@@ -79,12 +79,14 @@
     "step3": {
       "reviewInfoTitle": "Review",
       "reviewInfoText": "You can review a masked preview below. Only encrypted email representations will be stored after confirmation.",
+      "reviewInfoTextHashed": "You can review a hashed preview below. Only encrypted email representations will be stored after confirmation.",
       "title": "Review & confirm",
-      "subtitle": "Summary and masked preview before final confirmation.",
+      "subtitle": "Summary and hashed preview before final confirmation.",
       "valid": "Valid",
       "invalid": "Invalid",
       "duplicates": "Duplicates",
       "preview": "Preview (masked)",
+      "previewHashed": "Preview (hashed)",
       "noEmails": "No valid emails to show.",
       "notice": "After confirmation, only encrypted email representations are kept. The raw emails will not be stored."
     },
@@ -112,6 +114,208 @@
       "uploadsLabel": "Uploads",
       "emptyUploads": "No uploads found yet.",
       "uploadItemPrefix": "Upload"
+    },
+    "choice": {
+      "title": "Choose voucher method",
+      "subtitle": "Decide how recipients will get access",
+      "lead": "Both options control access to your offer. Choose what fits your case.",
+      "whitelist": {
+        "title": "Upload emails (hashed)",
+        "point1": "One code for everyone",
+        "point2": "Verify signups against your list",
+        "cta": "Use email whitelist"
+      },
+      "unique": {
+        "title": "Generate unique codes",
+        "lead": "Create unique, one-time codes to share with individuals",
+        "point1": "Each code can be used once",
+        "point2": "No email validation required",
+        "cta": "Generate unique codes"
+      }
+    }
+  },
+  "voucher": {
+    "title": "Voucher Whitelist Portal",
+    "subtitle": "Upload and approve recipient emails",
+    "actions": {
+      "backToDashboard": "Back to dashboard"
+    },
+    "steps": {
+      "overview": "Overview & DPA",
+      "upload": "Upload list",
+      "review": "Review & confirm",
+      "code": "Voucher code"
+    },
+    "cta": {
+      "title": "Voucher Whitelist Portal",
+      "description": "Upload a list of recipient emails and get your company voucher code.",
+      "button": "Open portal"
+    },
+    "step1": {
+      "gdprTitle": "Fully GDPR compliant",
+      "gdprText": "Monny uses an SFTP solution which allows for the uploading of personal contact details within GDPR guidelines. Monny won't have direct access to email addresses or the ability to reach out to contacts uploaded here.",
+      "setupTitle": "Set up your access list",
+      "intro1": "Before you can share your voucher code, we need a list of the recipients who should get access to your offer. This can be your employees, clients, or any other group you work with.",
+      "intro2": "We’ll only use this list to check whether someone signing up with your voucher code is eligible.",
+      "intro3": "To stay fully GDPR-compliant, we convert every email address into an encrypted format as soon as you confirm the upload. We never store readable email addresses.",
+      "whatTitle": "What will happen",
+      "list1": "You provide a list of recipient email addresses.",
+      "list2": "We validate the file and show you a masked preview.",
+      "list3": "After you confirm, we store only the encrypted version of each email.",
+      "list4": "When someone signs up with your voucher code, we encrypt their email and check if it matches your list.",
+      "list5": "If it matches, they get access at the correct price.",
+      "dpaTitle": "Data Processing Agreement",
+      "dpaLead": "To continue, please accept our Data Processing Agreement. It explains how we handle data, your responsibilities, and your rights under GDPR.",
+      "checkbox": "I have read and accept the Data Processing Agreement.",
+      "viewDpa": "View DPA",
+      "dpaModalPlaceholder": "Full DPA text will be provided here in a future update."
+    },
+    "step2": {
+      "title": "Upload recipient list",
+      "subtitle": "Upload a CSV file or paste emails (one per line). Only emails are required.",
+      "uploadingGuidelinesTitle": "Uploading guidelines",
+      "uploadingGuidelinesText": "Upload a CSV or paste emails below. Use one email per line. You can start with a template.",
+      "downloadTemplate": "Download template",
+      "clickToUpload": "Click to upload",
+      "orDragHere": "or drag and drop here",
+      "maxSize": "Maximum size: 25 MB",
+      "fileLabel": "Upload CSV or TXT",
+      "selectedFile": "Selected file",
+      "fileHint": "Excel not supported directly; export to CSV or paste emails below.",
+      "textLabel": "Paste emails (one per line)",
+      "textPlaceholder": "john@example.com\njane@example.com",
+      "fileType": "CSV/TXT",
+      "orPasteLabel": "Or paste emails (one per line)",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "duplicates": "Duplicates",
+      "validationHint": "Add at least one valid email to continue."
+    },
+    "step3": {
+      "reviewInfoTitle": "Review",
+      "reviewInfoText": "You can review a masked preview below. Only encrypted email representations will be stored after confirmation.",
+      "reviewInfoTextHashed": "You can review a hashed preview below. Only encrypted email representations will be stored after confirmation.",
+      "title": "Review & confirm",
+      "subtitle": "Summary and hashed preview before final confirmation.",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "duplicates": "Duplicates",
+      "preview": "Preview (masked)",
+      "previewHashed": "Preview (hashed)",
+      "noEmails": "No valid emails to show.",
+      "notice": "After confirmation, only encrypted email representations are kept. The raw emails will not be stored."
+    },
+    "code": {
+      "title": "Company Voucher Code",
+      "subtitle": "Share this code with your recipients",
+      "label": "Voucher code",
+      "copyError": "Could not copy. Please copy manually.",
+      "shareTitle": "Share the voucher",
+      "shareDesc": "Give this voucher code to the recipients who should get access (employees, clients, or cases).",
+      "recipientTitle": "Recipient signs up",
+      "recipientDesc": "They create an account with their email address and enter this voucher code in the app.",
+      "eligibilityTitle": "Automatic eligibility check",
+      "eligibilityDesc": "We convert their email into an encrypted format and compare it with the encrypted list you uploaded.",
+      "priceTitle": "If there’s a match, the price drops to €0.",
+      "privacyNote": "We never store readable email addresses.",
+      "howItWorks": "Recipients sign up in the app with their email and this voucher code. The system verifies if their email was included in your uploaded list.",
+      "summary": "You uploaded and confirmed",
+      "summaryEmails": "valid email(s)."
+    },
+    "dashboard": {
+      "panelTitle": "Voucher and uploads",
+      "panelDescription": "Overview of previous uploads and your voucher code.",
+      "uploadButton": "Upload Whitelist",
+      "uploadsLabel": "Uploads",
+      "emptyUploads": "No uploads found yet.",
+      "uploadItemPrefix": "Upload"
+    },
+    "choice": {
+      "title": "Choose voucher method",
+      "subtitle": "Decide how recipients will get access",
+      "lead": "Both options control access to your offer. Choose what fits your case.",
+      "whitelist": {
+        "title": "Upload emails (hashed)",
+        "point1": "One code for everyone",
+        "point2": "Verify signups against your list",
+        "cta": "Use email whitelist"
+      },
+      "unique": {
+        "title": "Generate unique codes",
+        "lead": "Create unique, one-time codes to share with individuals",
+        "point1": "Each code can be used once",
+        "point2": "No email validation required",
+        "cta": "Generate unique codes"
+      }
+    },
+    "codes": {
+      "title": "Generate unique voucher codes",
+      "form": {
+        "label": "Batch label (optional)",
+        "labelPlaceholder": "e.g. Pilot Group Feb",
+        "expires": "Expiry date (optional)",
+        "count": "How many codes",
+        "length": "Code length",
+        "prefix": "Prefix (optional)",
+        "prefixPlaceholder": "e.g. MONNY",
+        "excludeAmbiguous": "Exclude ambiguous characters (O,0,I,1,L)",
+        "ensureUnique": "Ensure unique across all batches",
+        "generate": "Generate codes",
+        "finishBack": "Finish — back to dashboard",
+        "generating": "Generating unique codes…",
+        "countError": "Count must be between 1 and 1000",
+        "lengthError": "Length must be between 6 and 12",
+        "prefixError": "Prefix must be up to 9 letters/numbers"
+      },
+      "result": {
+        "title": "Batch generated",
+        "subtitle": "{{count}} codes • Batch “{{label}}”",
+        "more": "Only first 50 shown. Export to view all."
+      },
+      "actions": {
+        "copyAll": "Copy all",
+        "print": "Print",
+        "sendEmail": "Send to email"
+      },
+      "batches": {
+        "title": "Previous batches",
+        "empty": "No batches yet.",
+        "markUsed": "Mark as used",
+        "markUnused": "Mark as unused"
+      },
+      "toasts": {
+        "generatedTitle": "Codes generated",
+        "generatedDesc": "{{count}} codes in batch “{{label}}”",
+        "copyError": "Could not copy. Please copy manually.",
+        "downloadedTitle": "Files prepared",
+        "downloadedDesc": "CSV and Excel downloaded. An email draft has been opened."
+      },
+      "send": {
+        "title": "Send codes by email",
+        "desc": "We’ll send the codes as CSV and Excel. Add recipients below.",
+        "systemEmailLabel": "Your email (system)",
+        "systemEmailHint": "This email is linked to your account and cannot be changed.",
+        "additionalLabel": "Additional recipients",
+        "addRecipient": "Add recipient",
+        "remove": "Remove recipient",
+        "validPreview": "Valid emails",
+        "sendCtas": "Send codes to email"
+      },
+      "share": {
+        "title": "Voucher codes",
+        "text": "Voucher codes attached. Recipients: {{emails}}",
+        "mailSubject": "Voucher codes",
+        "mailBody": "Files downloaded locally. Please attach and send the CSV/XLS files."
+      }
+    },
+    "unique": {
+      "panelTitle": "Unique voucher codes",
+      "panelDescription": "Generate one-time codes and manage past batches.",
+      "generateButton": "Generate codes",
+      "batchesLabel": "Batches",
+      "emptyBatches": "No batches yet.",
+      "manageButton": "Open codes",
+      "andMore": "and {{count}} more…"
     }
   },
   "cards": {

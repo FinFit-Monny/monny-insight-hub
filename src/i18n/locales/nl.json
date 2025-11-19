@@ -79,12 +79,14 @@
     "step3": {
       "reviewInfoTitle": "Controleren",
       "reviewInfoText": "U kunt hieronder een gemaskeerde preview bekijken. Alleen versleutelde representaties van e-mails worden na bevestiging opgeslagen.",
+      "reviewInfoTextHashed": "U kunt hieronder een gehashte preview bekijken. Alleen versleutelde representaties van e-mails worden na bevestiging opgeslagen.",
       "title": "Controleren & bevestigen",
-      "subtitle": "Samenvatting en gemaskeerde preview voor definitieve bevestiging.",
+      "subtitle": "Samenvatting en gehashte preview voor definitieve bevestiging.",
       "valid": "Geldig",
       "invalid": "Ongeldig",
       "duplicates": "Duplicaten",
       "preview": "Voorbeeld (gemaskeerd)",
+      "previewHashed": "Voorbeeld (gehasht)",
       "noEmails": "Geen geldige e-mails om te tonen.",
       "notice": "Na bevestiging worden alleen versleutelde representaties van e-mails bewaard. De ruwe e-mails worden niet opgeslagen."
     },
@@ -112,6 +114,208 @@
       "uploadsLabel": "Uploads",
       "emptyUploads": "Nog geen uploads gevonden.",
       "uploadItemPrefix": "Upload"
+    },
+    "choice": {
+      "title": "Kies voucher-methode",
+      "subtitle": "Bepaal hoe ontvangers toegang krijgen",
+      "lead": "Beide opties reguleren toegang tot uw aanbod. Kies wat past bij uw situatie.",
+      "whitelist": {
+        "title": "E-mails uploaden (gehasht)",
+        "point1": "Eén code voor iedereen",
+        "point2": "Verifieer aanmeldingen met uw lijst",
+        "cta": "Gebruik e-mail whitelist"
+      },
+      "unique": {
+        "title": "Unieke codes genereren",
+        "lead": "Maak unieke, eenmalige codes om te delen met individuen",
+        "point1": "Elke code kan één keer gebruikt worden",
+        "point2": "Geen e-mailvalidatie nodig",
+        "cta": "Genereer unieke codes"
+      }
+    }
+  },
+  "voucher": {
+    "title": "Voucher Whitelist Portal",
+    "subtitle": "Upload en keur ontvangers-e-mails goed",
+    "actions": {
+      "backToDashboard": "Terug naar dashboard"
+    },
+    "steps": {
+      "overview": "Overzicht & DPA",
+      "upload": "Lijst uploaden",
+      "review": "Controleren & bevestigen",
+      "code": "Vouchercode"
+    },
+    "cta": {
+      "title": "Voucher Whitelist Portal",
+      "description": "Upload een lijst met e-mails en ontvang uw bedrijfs-vouchercode.",
+      "button": "Open portal"
+    },
+    "step1": {
+      "gdprTitle": "Volledig AVG-conform",
+      "gdprText": "Monny gebruikt een SFTP-oplossing waarmee persoonlijke contactgegevens binnen de AVG-richtlijnen kunnen worden geüpload. Monny heeft geen directe toegang tot e-mailadressen en kan geen contact opnemen met hier geüploade contacten.",
+      "setupTitle": "Stel uw toegangslijst in",
+      "intro1": "Voordat u uw vouchercode kunt delen, hebben we een lijst nodig met ontvangers die toegang moeten krijgen tot uw aanbod. Dit kunnen medewerkers, klanten of een andere groep zijn waarmee u werkt.",
+      "intro2": "We gebruiken deze lijst alleen om te controleren of iemand die zich aanmeldt met uw vouchercode in aanmerking komt.",
+      "intro3": "Om volledig AVG-conform te blijven, zetten we elk e-mailadres om naar een versleuteld formaat zodra u de upload bevestigt. We slaan nooit leesbare e-mailadressen op.",
+      "whatTitle": "Wat gaat er gebeuren",
+      "list1": "U levert een lijst met e-mailadressen van ontvangers.",
+      "list2": "Wij valideren het bestand en tonen u een gemaskeerde preview.",
+      "list3": "Na uw bevestiging slaan we alleen de versleutelde versie van elk e-mailadres op.",
+      "list4": "Wanneer iemand zich aanmeldt met uw vouchercode, versleutelen wij hun e-mail en controleren we of deze overeenkomt met uw lijst.",
+      "list5": "Als het overeenkomt, krijgen ze toegang tegen de juiste prijs.",
+      "dpaTitle": "Data Processing Agreement",
+      "dpaLead": "Om door te gaan, accepteer alstublieft onze Data Processing Agreement. Hierin staat hoe we met data omgaan, uw verantwoordelijkheden en uw rechten onder de AVG.",
+      "checkbox": "Ik heb de Data Processing Agreement gelezen en accepteer deze.",
+      "viewDpa": "Bekijk DPA",
+      "dpaModalPlaceholder": "De volledige DPA-tekst wordt hier in een toekomstige update toegevoegd."
+    },
+    "step2": {
+      "title": "Ontvangerslijst uploaden",
+      "subtitle": "Upload een CSV-bestand of plak e-mails (één per regel). Alleen e-mails zijn vereist.",
+      "uploadingGuidelinesTitle": "Uploadrichtlijnen",
+      "uploadingGuidelinesText": "Upload een CSV of plak hieronder e-mails. Gebruik één e-mail per regel. U kunt beginnen met een template.",
+      "downloadTemplate": "Template downloaden",
+      "clickToUpload": "Klik om te uploaden",
+      "orDragHere": "of sleep hierheen",
+      "maxSize": "Maximale grootte: 25 MB",
+      "fileLabel": "Upload CSV of TXT",
+      "selectedFile": "Geselecteerd bestand",
+      "fileHint": "Excel wordt niet direct ondersteund; exporteer naar CSV of plak e-mails hieronder.",
+      "textLabel": "Plak e-mails (één per regel)",
+      "textPlaceholder": "jan@example.com\njanneke@example.com",
+      "fileType": "CSV/TXT",
+      "orPasteLabel": "Of plak e-mails (één per regel)",
+      "valid": "Geldig",
+      "invalid": "Ongeldig",
+      "duplicates": "Duplicaten",
+      "validationHint": "Voeg ten minste één geldig e-mailadres toe om door te gaan."
+    },
+    "step3": {
+      "reviewInfoTitle": "Controleren",
+      "reviewInfoText": "U kunt hieronder een gemaskeerde preview bekijken. Alleen versleutelde representaties van e-mails worden na bevestiging opgeslagen.",
+      "reviewInfoTextHashed": "U kunt hieronder een gehashte preview bekijken. Alleen versleutelde representaties van e-mails worden na bevestiging opgeslagen.",
+      "title": "Controleren & bevestigen",
+      "subtitle": "Samenvatting en gehashte preview voor definitieve bevestiging.",
+      "valid": "Geldig",
+      "invalid": "Ongeldig",
+      "duplicates": "Duplicaten",
+      "preview": "Voorbeeld (gemaskeerd)",
+      "previewHashed": "Voorbeeld (gehasht)",
+      "noEmails": "Geen geldige e-mails om te tonen.",
+      "notice": "Na bevestiging worden alleen versleutelde representaties van e-mails bewaard. De ruwe e-mails worden niet opgeslagen."
+    },
+    "code": {
+      "title": "Bedrijfs-vouchercode",
+      "subtitle": "Deel deze code met uw ontvangers",
+      "label": "Vouchercode",
+      "copyError": "Kon niet kopiëren. Kopieer handmatig.",
+      "shareTitle": "Deel de voucher",
+      "shareDesc": "Geef deze vouchercode aan de ontvangers die toegang moeten krijgen (medewerkers, klanten of cases).",
+      "recipientTitle": "Ontvanger meldt zich aan",
+      "recipientDesc": "Ze maken een account aan met hun e-mailadres en voeren deze vouchercode in de app in.",
+      "eligibilityTitle": "Automatische controle op geschiktheid",
+      "eligibilityDesc": "We zetten hun e-mail om naar een versleuteld formaat en vergelijken deze met de versleutelde lijst die u hebt geüpload.",
+      "priceTitle": "Bij een match daalt de prijs naar €0.",
+      "privacyNote": "We slaan nooit leesbare e-mailadressen op.",
+      "howItWorks": "Ontvangers melden zich in de app aan met hun e-mail en deze vouchercode. Het systeem controleert of hun e-mail in uw geüploade lijst staat.",
+      "summary": "U heeft bevestigd",
+      "summaryEmails": "geldige e-mail(s)."
+    },
+    "dashboard": {
+      "panelTitle": "Voucher en uploads",
+      "panelDescription": "Overzicht van eerdere uploads en uw vouchercode.",
+      "uploadButton": "Whitelist uploaden",
+      "uploadsLabel": "Uploads",
+      "emptyUploads": "Nog geen uploads gevonden.",
+      "uploadItemPrefix": "Upload"
+    },
+    "choice": {
+      "title": "Kies voucher-methode",
+      "subtitle": "Bepaal hoe ontvangers toegang krijgen",
+      "lead": "Beide opties reguleren toegang tot uw aanbod. Kies wat past bij uw situatie.",
+      "whitelist": {
+        "title": "E-mails uploaden (gehasht)",
+        "point1": "Eén code voor iedereen",
+        "point2": "Verifieer aanmeldingen met uw lijst",
+        "cta": "Gebruik e-mail whitelist"
+      },
+      "unique": {
+        "title": "Unieke codes genereren",
+        "lead": "Maak unieke, eenmalige codes om te delen met individuen",
+        "point1": "Elke code kan één keer gebruikt worden",
+        "point2": "Geen e-mailvalidatie nodig",
+        "cta": "Genereer unieke codes"
+      }
+    },
+    "codes": {
+      "title": "Unieke vouchercodes genereren",
+      "form": {
+        "label": "Batchlabel (optioneel)",
+        "labelPlaceholder": "bijv. Pilotgroep feb",
+        "expires": "Vervaldatum (optioneel)",
+        "count": "Aantal codes",
+        "length": "Codelengte",
+        "prefix": "Prefix (optioneel)",
+        "prefixPlaceholder": "bijv. MONNY",
+        "excludeAmbiguous": "Ambigue tekens uitsluiten (O,0,I,1,L)",
+        "ensureUnique": "Uniek over alle batches",
+        "generate": "Codes genereren",
+        "finishBack": "Afronden — terug naar dashboard",
+        "generating": "Unieke codes genereren…",
+        "countError": "Aantal moet tussen 1 en 1000 liggen",
+        "lengthError": "Lengte moet tussen 6 en 12 liggen",
+        "prefixError": "Prefix maximaal 9 letters/cijfers"
+      },
+      "result": {
+        "title": "Batch gegenereerd",
+        "subtitle": "{{count}} codes • Batch “{{label}}”",
+        "more": "Alleen de eerste 50 getoond. Exporteer om alles te zien."
+      },
+      "actions": {
+        "copyAll": "Alles kopiëren",
+        "print": "Printen",
+        "sendEmail": "Per e-mail versturen"
+      },
+      "batches": {
+        "title": "Eerdere batches",
+        "empty": "Nog geen batches.",
+        "markUsed": "Markeer als gebruikt",
+        "markUnused": "Markeer als ongebruikt"
+      },
+      "toasts": {
+        "generatedTitle": "Codes gegenereerd",
+        "generatedDesc": "{{count}} codes in batch “{{label}}”",
+        "copyError": "Kon niet kopiëren. Kopieer handmatig.",
+        "downloadedTitle": "Bestanden voorbereid",
+        "downloadedDesc": "CSV en Excel gedownload. Er is een e-mailconcept geopend."
+      },
+      "send": {
+        "title": "Codes per e-mail versturen",
+        "desc": "We sturen de codes als CSV en Excel. Voeg hieronder ontvangers toe.",
+        "systemEmailLabel": "Jouw e-mail (systeem)",
+        "systemEmailHint": "Dit e-mailadres is gekoppeld aan je account en kan niet gewijzigd worden.",
+        "additionalLabel": "Extra ontvangers",
+        "addRecipient": "Ontvanger toevoegen",
+        "remove": "Ontvanger verwijderen",
+        "validPreview": "Geldige e-mails",
+        "sendCtas": "Stuur codes per e-mail"
+      },
+      "share": {
+        "title": "Vouchercodes",
+        "text": "Vouchercodes als bijlage. Ontvangers: {{emails}}",
+        "mailSubject": "Vouchercodes",
+        "mailBody": "Bestanden lokaal gedownload. Voeg de CSV/XLS-bestanden toe aan de e-mail."
+      }
+    },
+    "unique": {
+      "panelTitle": "Unieke vouchercodes",
+      "panelDescription": "Genereer eenmalige codes en beheer eerdere batches.",
+      "generateButton": "Codes genereren",
+      "batchesLabel": "Batches",
+      "emptyBatches": "Nog geen batches.",
+      "manageButton": "Open codes",
+      "andMore": "en nog {{count}}…"
     }
   },
   "cards": {
