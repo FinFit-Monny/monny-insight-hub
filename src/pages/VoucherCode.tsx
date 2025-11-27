@@ -1,29 +1,52 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { Check, Copy as CopyIcon, Info, Share2, UserPlus, ShieldCheck } from "lucide-react";
+import { useDashboardViewModel } from "@/viewmodels/useDashboardViewModel";
+import type { VoucherUploadResponse } from "@/api/voucher";
 
 const VoucherCode = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { data: dashboard } = useDashboardViewModel();
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
 
-  const voucherCode = "FAIRC";
+  const uploadFromState = (location.state as { upload?: VoucherUploadResponse } | null | undefined)?.upload;
+
+  const voucherCode = uploadFromState?.voucherCode ?? dashboard?.voucher.whitelist.voucherCode ?? "";
+
   const result = useMemo(() => {
-    try {
-      const raw = sessionStorage.getItem("voucherWhitelistResult");
-      return raw ? JSON.parse(raw) as { totalValid: number; totalInvalid: number; totalDuplicates: number; createdAt: string } : null;
-    } catch {
-      return null;
+    if (uploadFromState) {
+      const { counts, createdAt } = uploadFromState;
+      return {
+        totalValid: counts.totalValid,
+        totalInvalid: counts.totalInvalid,
+        totalDuplicates: counts.totalDuplicates,
+        createdAt,
+      };
     }
-  }, []);
+    const firstUpload = dashboard?.voucher.whitelist.uploads[0];
+    if (firstUpload) {
+      return {
+        totalValid: firstUpload.totalValid,
+        totalInvalid: firstUpload.totalInvalid,
+        totalDuplicates: firstUpload.totalDuplicates,
+        createdAt: firstUpload.createdAt,
+      };
+    }
+    return null;
+  }, [dashboard, uploadFromState]);
 
   const onCopy = async () => {
     setCopyError(null);
     try {
+      if (!voucherCode) {
+        throw new Error("No voucher code available to copy");
+      }
       if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
         await navigator.clipboard.writeText(voucherCode);
         setCopied(true);

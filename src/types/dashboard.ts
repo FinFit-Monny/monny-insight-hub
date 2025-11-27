@@ -57,6 +57,30 @@ export interface StatCardsData {
   monthlyActiveUsers: StatCardsMonthlyActiveUsers;
 }
 
+export interface VoucherUploadSummary {
+  createdAt: string | null;
+  totalValid: number;
+  totalInvalid: number;
+  totalDuplicates: number;
+}
+
+export interface VoucherUniqueBatchSummary {
+  id: string;
+  label?: string;
+  createdAt: string | null;
+  count: number;
+}
+
+export interface VoucherDashboardData {
+  whitelist: {
+    voucherCode: string | null;
+    uploads: VoucherUploadSummary[];
+  };
+  unique: {
+    batches: VoucherUniqueBatchSummary[];
+  };
+}
+
 export interface Metadata {
   lastUpdated: string | null;
   periodStart: string | null;
@@ -74,6 +98,7 @@ export interface DashboardResponse {
   moodCheckChart?: MoodCheckChartData;
   statCards?: StatCardsData;
   metadata?: Metadata;
+  voucher?: VoucherDashboardData;
 }
 
 // ViewModel types exposed to UI
@@ -84,6 +109,7 @@ export interface DashboardViewModel {
   coaching: CoachingSessionsData;
   mood: MoodCheckChartData;
   stats: StatCardsData;
+  voucher: VoucherDashboardData;
 }
 
 

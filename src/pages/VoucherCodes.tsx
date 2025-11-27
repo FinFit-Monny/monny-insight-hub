@@ -9,18 +9,19 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Copy as CopyIcon, Download, Printer, Check, Mail, Plus, Trash2 } from "lucide-react";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import {
-  VoucherCodeBatch,
-  generateVoucherCodes,
-  getBatches,
-  saveBatch,
   exportBatchCsv,
   exportBatchJson,
   exportBatchExcel,
   downloadBlob,
-  toggleCodeUsed,
 } from "@/lib/voucher";
+import {
+  type VoucherCodeBatch,
+  createVoucherCodeBatch,
+  getVoucherCodeBatches,
+  toggleVoucherCodeUsed,
+} from "@/api/voucher";
 import { isValidEmail } from "@/lib/email";
 
 const VoucherCodes = () => {
@@ -28,6 +29,7 @@ const VoucherCodes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   const [label, setLabel] = useState("");
   const [count, setCount] = useState(50);
@@ -44,8 +46,26 @@ const VoucherCodes = () => {
   const [recipientInputs, setRecipientInputs] = useState<string[]>([]);
 
   useEffect(() => {
-    setBatches(getBatches());
-  }, []);
+    let cancelled = false;
+    async function loadBatches() {
+      if (!user) return;
+      try {
+        const token = await getToken().catch(() => null);
+        const serverBatches = await getVoucherCodeBatches(user.id, token ?? null);
+        if (!cancelled) {
+          setBatches(serverBatches);
+        }
+      } catch {
+        if (!cancelled) {
+          setBatches([]);
+        }
+      }
+    }
+    loadBatches();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, getToken]);
 
   const errors = useMemo(() => {
     const errs: Record<string, string> = {};
@@ -56,24 +76,26 @@ const VoucherCodes = () => {
   const canGenerate = Object.keys(errors).length === 0;
 
   const onGenerate = async () => {
-    if (!canGenerate) return;
+    if (!canGenerate || !user) return;
     setIsGenerating(true);
     setGenerated(null);
-    const options = {
-      label: label || undefined,
-      count,
-      length: fixedLength,
-      excludeAmbiguous,
-      ensureGlobalUnique,
-      expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
-    };
-    // Simulate processing emphasis
-    setTimeout(() => {
-      const batch = generateVoucherCodes(options);
-      saveBatch(batch);
+    try {
+      const token = await getToken().catch(() => null);
+      const batch = await createVoucherCodeBatch(
+        {
+          userId: user.id,
+          label: label || undefined,
+          count,
+          length: fixedLength,
+          prefix: undefined,
+          excludeAmbiguous,
+          ensureGlobalUnique,
+          expiresAt: expiresAt || null,
+        },
+        token ?? null,
+      );
       setGenerated(batch);
-      setBatches(getBatches());
-      setIsGenerating(false);
+      setBatches((prev) => [...prev, batch]);
       toast({
         title: t("voucher.codes.toasts.generatedTitle", "Codes generated"),
         description: t("voucher.codes.toasts.generatedDesc", "{{count}} codes in batch “{{label}}”", {
@@ -81,7 +103,15 @@ const VoucherCodes = () => {
           label: batch.label || batch.id.slice(0, 8),
         }),
       });
-    }, 5000);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : t("voucher.codes.toasts.copyError", "Could not copy. Please copy manually.");
+      toast({ title: message });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const copyAll = async (batch: VoucherCodeBatch) => {
@@ -363,10 +393,21 @@ const VoucherCodes = () => {
                                 key={c.code}
                                 className={`px-2 py-1 rounded border text-left ${c.used ? "bg-emerald-50 border-emerald-200" : "bg-muted/30"}`}
                                 title={c.used ? t("voucher.codes.batches.markUnused", "Mark as unused") : t("voucher.codes.batches.markUsed", "Mark as used")}
-                                onClick={() => {
-                                  const updated = toggleCodeUsed(b.id, c.code);
-                                  if (updated) {
-                                    setBatches((prev) => prev.map((x) => (x.id === updated!.id ? updated! : x)));
+                                onClick={async () => {
+                                  if (!user) return;
+                                  try {
+                                    const token = await getToken().catch(() => null);
+                                    const updated = await toggleVoucherCodeUsed(
+                                      {
+                                        userId: user.id,
+                                        batchId: b.id,
+                                        code: c.code,
+                                      },
+                                      token ?? null,
+                                    );
+                                    setBatches((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
+                                  } catch {
+                                    // Silently ignore toggling errors for now; admin can retry
                                   }
                                 }}
                               >

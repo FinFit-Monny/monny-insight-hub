@@ -1,5 +1,4 @@
 import { Users, CreditCard } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
 import { StatCard } from "@/components/StatCard";
 import { UserGrowthChart } from "@/components/UserGrowthChart";
 import { EnrolmentRate } from "@/components/EnrolmentRate";
@@ -19,47 +18,13 @@ const Index = () => {
   const { t, i18n } = useTranslation();
   const { data, isLoading, isError, isNotAdmin } = useDashboardViewModel();
   const companyName = data?.companyName || "";
-  const [uploads, setUploads] = useState<Array<{ createdAt: string; totalValid: number }>>([]);
-  const [uniqueBatches, setUniqueBatches] = useState<Array<{ id: string; label?: string; createdAt: string; count: number }>>([]);
-  const hasUploads = uploads.length > 0;
-  const hasUniqueBatches = uniqueBatches.length > 0;
   const normalizedLanguage = i18n.language.split('-')[0];
   const locale = normalizedLanguage === 'nl' ? 'nl-NL' : 'en-US';
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("voucherUploads");
-      if (!raw) {
-        setUploads([]);
-        return;
-      }
-      const parsed = JSON.parse(raw) as Array<{ createdAt: string; totalValid: number }>;
-      if (Array.isArray(parsed)) {
-        setUploads(parsed);
-      } else {
-        setUploads([]);
-      }
-    } catch {
-      setUploads([]);
-    }
-  }, []);
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("voucherCodeBatches");
-      if (!raw) {
-        setUniqueBatches([]);
-        return;
-      }
-      const parsed = JSON.parse(raw) as Array<{ id: string; label?: string; createdAt: string; count: number }>;
-      if (Array.isArray(parsed)) {
-        setUniqueBatches(parsed);
-      } else {
-        setUniqueBatches([]);
-      }
-    } catch {
-      setUniqueBatches([]);
-    }
-  }, []);
+  const uploads = data?.voucher.whitelist.uploads ?? [];
+  const hasUploads = uploads.length > 0;
+  const uniqueBatches = data?.voucher.unique.batches ?? [];
+  const hasUniqueBatches = uniqueBatches.length > 0;
+  const voucherCode = data?.voucher.whitelist.voucherCode ?? "";
   
   return (
     <div className="min-h-screen bg-background">
@@ -202,7 +167,7 @@ const Index = () => {
                         <div>
                           <div className="text-sm text-muted-foreground">{t('voucher.code.label')}</div>
                           <div className="mt-1 inline-flex items-center justify-center border rounded-md px-3 py-2 font-mono text-xl font-semibold tracking-widest uppercase">
-                            FAIRC
+                            {voucherCode || "—"}
                           </div>
                         </div>
                         <div className="flex-1 flex flex-col">

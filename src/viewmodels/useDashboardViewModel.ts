@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import { getDashboardData } from "@/api/dashboard";
-import type { DashboardResponse, DashboardViewModel, MoodScoreKey } from "@/types/dashboard";
+import type {
+  DashboardResponse,
+  DashboardViewModel,
+  MoodScoreKey,
+  VoucherDashboardData,
+} from "@/types/dashboard";
 import { useMemo } from "react";
 
 function isNotAdmin(data: DashboardResponse | undefined): boolean {
@@ -18,7 +23,17 @@ function toViewModel(data: DashboardResponse | undefined): DashboardViewModel | 
       !data.coachingSessions || !data.moodCheckChart || !data.statCards) {
     return null;
   }
-  
+
+  const voucher: VoucherDashboardData = data.voucher ?? {
+    whitelist: {
+      voucherCode: null,
+      uploads: [],
+    },
+    unique: {
+      batches: [],
+    },
+  };
+
   return {
     companyName: data.companyInfo.companyName || "",
     userGrowth: data.userGrowthChart,
@@ -26,6 +41,7 @@ function toViewModel(data: DashboardResponse | undefined): DashboardViewModel | 
     coaching: data.coachingSessions,
     mood: data.moodCheckChart,
     stats: data.statCards,
+    voucher,
   };
 }
 

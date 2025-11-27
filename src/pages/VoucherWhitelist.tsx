@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { isValidEmail, parseEmailsFromText, maskEmail, hashEmailSha256 } from "@/lib/email";
+import { isValidEmail, parseEmailsFromText, hashEmailSha256 } from "@/lib/email";
 import {
   Dialog,
   DialogTrigger,
@@ -18,11 +18,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Info, Shield, Upload, Trash2, FileSpreadsheet, Check, Loader2 } from "lucide-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { createVoucherUpload } from "@/api/voucher";
 
 const VoucherWhitelist = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { getToken } = useAuth();
+  const { user } = useUser();
   const [step, setStep] = useState<1 | 2>(1);
   const [acceptedDpa, setAcceptedDpa] = useState(false);
   const [pastedText, setPastedText] = useState("");
@@ -32,6 +36,8 @@ const VoucherWhitelist = () => {
   const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
   const [isAnonymising, setIsAnonymising] = useState(false);
   const [hashedPreview, setHashedPreview] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -71,75 +77,31 @@ const VoucherWhitelist = () => {
     };
   }, [step, validEmails]);
 
-  async function onConfirm() {
-    // Hash emails and persist in session for the code page to reference
+  const onConfirm = async () => {
+    if (!acceptedDpa || validEmails.length === 0 || !user) return;
+    setSubmitError(null);
+    setIsSubmitting(true);
     try {
-      const hashes = await Promise.all(validEmails.map((e) => hashEmailSha256(e)));
-      const payload = {
-        hashedEmails: hashes,
-        totalValid: validEmails.length,
-        totalInvalid: invalidEmails.length,
-        totalDuplicates: duplicateEmails.length,
-        createdAt: new Date().toISOString(),
-      };
-      try {
-        sessionStorage.setItem("voucherWhitelistResult", JSON.stringify(payload));
-        // Also persist a lightweight record of this upload locally for dashboard display
-        try {
-          const raw = localStorage.getItem("voucherUploads");
-          const existing: Array<{ createdAt: string; totalValid: number; totalInvalid: number; totalDuplicates: number }> =
-            raw ? JSON.parse(raw) : [];
-          const next = [
-            ...existing,
-            {
-              createdAt: payload.createdAt,
-              totalValid: payload.totalValid,
-              totalInvalid: payload.totalInvalid,
-              totalDuplicates: payload.totalDuplicates,
-            },
-          ];
-          localStorage.setItem("voucherUploads", JSON.stringify(next));
-        } catch {
-          // ignore localStorage/JSON issues
-        }
-      } catch {
-        // ignore storage issues
-      }
-    } catch {
-      // If hashing fails (e.g., crypto.subtle unavailable), still proceed with minimal payload
-      const payload = {
-        hashedEmails: [],
-        totalValid: validEmails.length,
-        totalInvalid: invalidEmails.length,
-        totalDuplicates: duplicateEmails.length,
-        createdAt: new Date().toISOString(),
-      };
-      try {
-        sessionStorage.setItem("voucherWhitelistResult", JSON.stringify(payload));
-        // Attempt to persist a lightweight record even if hashing failed
-        try {
-          const raw = localStorage.getItem("voucherUploads");
-          const existing: Array<{ createdAt: string; totalValid: number; totalInvalid: number; totalDuplicates: number }> =
-            raw ? JSON.parse(raw) : [];
-          const next = [
-            ...existing,
-            {
-              createdAt: payload.createdAt,
-              totalValid: payload.totalValid,
-              totalInvalid: payload.totalInvalid,
-              totalDuplicates: payload.totalDuplicates,
-            },
-          ];
-          localStorage.setItem("voucherUploads", JSON.stringify(next));
-        } catch {
-          // ignore localStorage/JSON issues
-        }
-      } catch {
-        // ignore
-      }
+      const token = await getToken().catch(() => null);
+      const upload = await createVoucherUpload(
+        {
+          userId: user.id,
+          emails: validEmails,
+        },
+        token ?? null,
+      );
+      navigate("/voucher-whitelist/code", { state: { upload } });
+    } catch (error) {
+      // Surface a clear error to the admin so issues can be fixed, instead of silently falling back
+      const message =
+        error instanceof Error
+          ? error.message
+          : t("voucher.step3.errorGeneric", "Could not save whitelist. Please try again.");
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
     }
-    navigate("/voucher-whitelist/code");
-  }
+  };
 
   function parseAndValidate(text: string) {
     const emails = parseEmailsFromText(text);
@@ -443,10 +405,24 @@ const VoucherWhitelist = () => {
                     {t("common.next", "Next")}
                   </Button>
                 ) : (
-                  <Button disabled={!canContinue} onClick={onConfirm}>{t("common.confirm", "Confirm")}</Button>
+                  <Button disabled={!canContinue || isSubmitting} onClick={onConfirm}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t("voucher.codes.form.generating", "Generating unique codes…")}
+                      </>
+                    ) : (
+                      t("common.confirm", "Confirm")
+                    )}
+                  </Button>
                 )}
               </div>
             </div>
+            {submitError && (
+              <div className="mt-3 text-sm text-red-600">
+                {submitError}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
