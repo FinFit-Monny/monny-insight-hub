@@ -9,8 +9,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import VoucherWhitelist from "./pages/VoucherWhitelist";
 import VoucherCode from "./pages/VoucherCode";
-import VoucherMethod from "./pages/VoucherMethod";
-import VoucherCodes from "./pages/VoucherCodes";
 import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
@@ -35,11 +33,6 @@ const App = () => {
                   <div className="p-8">{t("header.protected")}</div>
                 </ProtectedRoute>
               } />
-              <Route path="/voucher" element={
-                <ProtectedRoute>
-                  <VoucherMethod />
-                </ProtectedRoute>
-              } />
               <Route path="/voucher-whitelist" element={
                 <ProtectedRoute>
                   <VoucherWhitelist />
@@ -48,11 +41,6 @@ const App = () => {
               <Route path="/voucher-whitelist/code" element={
                 <ProtectedRoute>
                   <VoucherCode />
-                </ProtectedRoute>
-              } />
-              <Route path="/voucher-codes" element={
-                <ProtectedRoute>
-                  <VoucherCodes />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

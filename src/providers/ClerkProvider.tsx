@@ -19,28 +19,28 @@ export const ClerkProvider = ({ children }: ClerkProviderProps) => {
       appearance={{
         elements: {
           formButtonPrimary: {
-            backgroundColor: '#0B6CF3',
-            '&:hover': { backgroundColor: '#0A52BF' },
-            '&:focus': { backgroundColor: '#0A52BF' },
+            backgroundColor: '#7F22FE',
+            '&:hover': { backgroundColor: '#4D179A' },
+            '&:focus': { backgroundColor: '#4D179A' },
           },
           footerActionLink: {
-            color: '#0B6CF3',
-            '&:hover': { color: '#0A52BF' },
+            color: '#7F22FE',
+            '&:hover': { color: '#4D179A' },
           },
-          identityPreviewEditButton: { color: '#0B6CF3' },
-          spinner: { color: '#0B6CF3' },
+          identityPreviewEditButton: { color: '#7F22FE' },
+          spinner: { color: '#7F22FE' },
           formFieldInput: {
             '&:focus': {
-              borderColor: '#0B6CF3',
-              boxShadow: '0 0 0 1px #0B6CF3',
+              borderColor: '#7F22FE',
+              boxShadow: '0 0 0 1px #7F22FE',
             },
           },
           socialButtonsBlockButton: {
-            '&:hover': { backgroundColor: '#E6F0FF' },
+            '&:hover': { backgroundColor: '#F4EDFF' },
           },
         },
         variables: {
-          colorPrimary: '#0B6CF3',
+          colorPrimary: '#7F22FE',
           colorSuccess: '#1DBF73',
           colorWarning: '#FFD62E',
           colorDanger: '#ef4444',

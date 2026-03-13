@@ -6,7 +6,7 @@ import { CoachingSessions } from "@/components/CoachingSessions";
 import { MoodCheckChart } from "@/components/MoodCheckChart";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import monnyLogo from "@/assets/monny-logo.png";
+import monnyTextLogo from "@/assets/monny-text-logo.png";
 import { UserButton, useUser } from "@clerk/clerk-react";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -22,8 +22,6 @@ const Index = () => {
   const locale = normalizedLanguage === 'nl' ? 'nl-NL' : 'en-US';
   const uploads = data?.voucher.whitelist.uploads ?? [];
   const hasUploads = uploads.length > 0;
-  const uniqueBatches = data?.voucher.unique.batches ?? [];
-  const hasUniqueBatches = uniqueBatches.length > 0;
   const voucherCode = data?.voucher.whitelist.voucherCode ?? "";
   
   return (
@@ -31,12 +29,9 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={monnyLogo} alt="Monny Logo" className="w-10 h-10 rounded-lg" />
-            <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-foreground">{t('header.title')}</h1>
-              <p className="text-sm text-muted-foreground">{t('header.company', { company: companyName })}</p>
-            </div>
+          <div className="flex items-center gap-3">
+            <img src={monnyTextLogo} alt="Monny" className="h-8" />
+            <span className="text-sm text-muted-foreground">{t('header.company', { company: companyName })}</span>
           </div>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
@@ -204,75 +199,6 @@ const Index = () => {
                 </CardContent>
               )}
             </Card>
-            <div className="mt-4">
-              <Card className="h-full flex flex-col">
-                <CardContent className="pt-6 flex flex-col h-full">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <h2 className="text-lg font-semibold">{t('voucher.unique.panelTitle', 'Unique voucher codes')}</h2>
-                      <p className="text-sm text-muted-foreground">
-                        {t('voucher.unique.panelDescription', 'Generate one-time codes and manage past batches.')}
-                      </p>
-                    </div>
-                    <Button asChild>
-                      <Link to="/voucher-codes">{t('voucher.unique.generateButton', 'Generate codes')}</Link>
-                    </Button>
-                  </div>
-                  <div className="mt-4 rounded-lg border p-4 flex-1">
-                    <div className="text-sm font-medium mb-2">{t('voucher.unique.batchesLabel', 'Batches')}</div>
-                    <div className="rounded-md border">
-                      <div className="divide-y">
-                        {(() => {
-                          const previewCount = 5;
-                          const ordered = uniqueBatches.slice().reverse();
-                          const preview = ordered.slice(0, previewCount);
-                          const remaining = Math.max(0, ordered.length - preview.length);
-                          return (
-                            <>
-                              {preview.map((b) => {
-                          const when = new Date(b.createdAt);
-                          const formatted = isNaN(when.getTime())
-                            ? b.createdAt
-                            : when.toLocaleString(locale, {
-                                year: "numeric",
-                                month: "short",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              });
-                                return (
-                                  <div key={b.id} className="flex items-center justify-between px-3 py-2 text-sm">
-                                    <div className="text-muted-foreground">
-                                      {(b.label || b.id.slice(0, 8))} • {formatted}
-                                    </div>
-                                    <div className="font-medium">{b.count}</div>
-                                  </div>
-                                );
-                              })}
-                              {remaining > 0 && (
-                                <div className="px-3 py-2 text-xs text-muted-foreground">
-                                  {t('voucher.unique.andMore', { count: remaining, defaultValue: 'and {{count}} more…' })}
-                                </div>
-                              )}
-                            </>
-                          );
-                        })()}
-                        {uniqueBatches.length === 0 && (
-                          <div className="px-3 py-2 text-sm text-muted-foreground">
-                            {t('voucher.unique.emptyBatches', 'No batches yet.')}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="mt-3 flex justify-end">
-                      <Button variant="outline" asChild>
-                        <Link to="/voucher-codes">{t('voucher.unique.manageButton', 'Open codes')}</Link>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
 

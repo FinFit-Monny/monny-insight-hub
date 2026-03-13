@@ -64,20 +64,10 @@ export interface VoucherUploadSummary {
   totalDuplicates: number;
 }
 
-export interface VoucherUniqueBatchSummary {
-  id: string;
-  label?: string;
-  createdAt: string | null;
-  count: number;
-}
-
 export interface VoucherDashboardData {
   whitelist: {
     voucherCode: string | null;
     uploads: VoucherUploadSummary[];
-  };
-  unique: {
-    batches: VoucherUniqueBatchSummary[];
   };
 }
 

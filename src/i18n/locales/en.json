@@ -57,29 +57,34 @@
     },
     "step2": {
       "title": "Upload recipient list",
-      "subtitle": "Upload a CSV file or paste emails (one per line). Only emails are required.",
+      "subtitle": "Upload a CSV file or paste emails and phone numbers (one per line).",
       "uploadingGuidelinesTitle": "Uploading guidelines",
-      "uploadingGuidelinesText": "Upload a CSV or paste emails below. Use one email per line. You can start with a template.",
+      "uploadingGuidelinesText": "Upload a CSV or paste emails and phone numbers below. Use one entry per line. We auto-detect the type. You can start with a template.",
       "downloadTemplate": "Download template",
       "clickToUpload": "Click to upload",
       "orDragHere": "or drag and drop here",
       "maxSize": "Maximum size: 25 MB",
       "fileLabel": "Upload CSV or TXT",
       "selectedFile": "Selected file",
-      "fileHint": "Excel not supported directly; export to CSV or paste emails below.",
-      "textLabel": "Paste emails (one per line)",
+      "fileHint": "Excel not supported directly; export to CSV or paste entries below.",
+      "textLabel": "Paste emails and phones (one per line)",
       "textPlaceholder": "john@example.com\njane@example.com",
+      "textPlaceholderUnified": "jan@company.nl\n+31612345678\nmarie@company.nl\n0687654321",
       "fileType": "CSV/TXT",
       "orPasteLabel": "Or paste emails (one per line)",
+      "orPasteLabelUnified": "Or paste emails and phone numbers (one per line)",
       "valid": "Valid",
+      "validEmails": "Valid emails",
+      "validPhones": "Valid phones",
       "invalid": "Invalid",
       "duplicates": "Duplicates",
-      "validationHint": "Add at least one valid email to continue."
+      "validationHint": "Add at least one valid email to continue.",
+      "validationHintUnified": "Add at least one valid email or phone number to continue."
     },
     "step3": {
       "reviewInfoTitle": "Review",
       "reviewInfoText": "You can review a masked preview below. Only encrypted email representations will be stored after confirmation.",
-      "reviewInfoTextHashed": "You can review a hashed preview below. Only encrypted email representations will be stored after confirmation.",
+      "reviewInfoTextHashed": "You can review a hashed preview below. Only encrypted representations will be stored after confirmation.",
       "title": "Review & confirm",
       "subtitle": "Summary and hashed preview before final confirmation.",
       "valid": "Valid",
@@ -87,8 +92,11 @@
       "duplicates": "Duplicates",
       "preview": "Preview (masked)",
       "previewHashed": "Preview (hashed)",
+      "previewEmailsHashed": "Email preview (hashed)",
+      "previewPhonesHashed": "Phone preview (hashed)",
       "noEmails": "No valid emails to show.",
-      "notice": "After confirmation, only encrypted email representations are kept. The raw emails will not be stored."
+      "noEntries": "No valid entries to show.",
+      "notice": "After confirmation, only encrypted representations are kept. The raw data will not be stored."
     },
     "code": {
       "title": "Company Voucher Code",
@@ -172,29 +180,34 @@
     },
     "step2": {
       "title": "Upload recipient list",
-      "subtitle": "Upload a CSV file or paste emails (one per line). Only emails are required.",
+      "subtitle": "Upload a CSV file or paste emails and phone numbers (one per line).",
       "uploadingGuidelinesTitle": "Uploading guidelines",
-      "uploadingGuidelinesText": "Upload a CSV or paste emails below. Use one email per line. You can start with a template.",
+      "uploadingGuidelinesText": "Upload a CSV or paste emails and phone numbers below. Use one entry per line. We auto-detect the type. You can start with a template.",
       "downloadTemplate": "Download template",
       "clickToUpload": "Click to upload",
       "orDragHere": "or drag and drop here",
       "maxSize": "Maximum size: 25 MB",
       "fileLabel": "Upload CSV or TXT",
       "selectedFile": "Selected file",
-      "fileHint": "Excel not supported directly; export to CSV or paste emails below.",
-      "textLabel": "Paste emails (one per line)",
+      "fileHint": "Excel not supported directly; export to CSV or paste entries below.",
+      "textLabel": "Paste emails and phones (one per line)",
       "textPlaceholder": "john@example.com\njane@example.com",
+      "textPlaceholderUnified": "jan@company.nl\n+31612345678\nmarie@company.nl\n0687654321",
       "fileType": "CSV/TXT",
       "orPasteLabel": "Or paste emails (one per line)",
+      "orPasteLabelUnified": "Or paste emails and phone numbers (one per line)",
       "valid": "Valid",
+      "validEmails": "Valid emails",
+      "validPhones": "Valid phones",
       "invalid": "Invalid",
       "duplicates": "Duplicates",
-      "validationHint": "Add at least one valid email to continue."
+      "validationHint": "Add at least one valid email to continue.",
+      "validationHintUnified": "Add at least one valid email or phone number to continue."
     },
     "step3": {
       "reviewInfoTitle": "Review",
       "reviewInfoText": "You can review a masked preview below. Only encrypted email representations will be stored after confirmation.",
-      "reviewInfoTextHashed": "You can review a hashed preview below. Only encrypted email representations will be stored after confirmation.",
+      "reviewInfoTextHashed": "You can review a hashed preview below. Only encrypted representations will be stored after confirmation.",
       "title": "Review & confirm",
       "subtitle": "Summary and hashed preview before final confirmation.",
       "valid": "Valid",
@@ -202,8 +215,11 @@
       "duplicates": "Duplicates",
       "preview": "Preview (masked)",
       "previewHashed": "Preview (hashed)",
+      "previewEmailsHashed": "Email preview (hashed)",
+      "previewPhonesHashed": "Phone preview (hashed)",
       "noEmails": "No valid emails to show.",
-      "notice": "After confirmation, only encrypted email representations are kept. The raw emails will not be stored."
+      "noEntries": "No valid entries to show.",
+      "notice": "After confirmation, only encrypted representations are kept. The raw data will not be stored."
     },
     "code": {
       "title": "Company Voucher Code",
@@ -362,6 +378,19 @@
     "notAdminTitle": "Access Restricted",
     "notAdminDescription": "You are not an administrator and therefore cannot view this dashboard.",
     "notAdminContact": "Please contact your administrator if you believe this is an error."
+  },
+  "phoneSignIn": {
+    "title": "Sign in to Monny",
+    "description": "Enter your phone number to receive a verification code.",
+    "phonePlaceholder": "Phone number",
+    "sendCode": "Send verification code",
+    "sendCodeError": "Could not send verification code. Please try again.",
+    "otpTitle": "Enter verification code",
+    "otpDescription": "We sent a 6-digit code to {{phone}}.",
+    "verifyError": "Invalid code. Please try again.",
+    "verificationIncomplete": "Verification incomplete. Please try again.",
+    "resendCode": "Didn't receive a code? Send again",
+    "changeNumber": "Use a different number"
   }
 }
 

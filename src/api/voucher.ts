@@ -6,20 +6,34 @@ import { apiPost } from "@/api/client";
 
 export interface CreateVoucherUploadPayload {
   userId: string;
-  emails: string[];
+  emails?: string[];
+  phones?: string[];
 }
 
 export interface VoucherUploadResponse {
   companyName: string;
   voucherCode: string | null;
-  uploadId: number;
-  createdAt: string | null;
-  counts: {
+  uploadId?: number;
+  createdAt?: string | null;
+  emailCounts?: {
+    totalValid: number;
+    totalInvalid: number;
+    totalDuplicates: number;
+    newEntries: number;
+  };
+  phoneCounts?: {
+    totalValid: number;
+    totalInvalid: number;
+    totalDuplicates: number;
+    newEntries: number;
+  };
+  // Legacy fields for backwards compatibility
+  counts?: {
     totalValid: number;
     totalInvalid: number;
     totalDuplicates: number;
   };
-  newEntries: number;
+  newEntries?: number;
 }
 
 export async function createVoucherUpload(
@@ -53,73 +67,3 @@ export async function validateVoucherCode(
   });
 }
 
-// =============================================================================
-// Voucher Codes (POST /voucher-codes)
-// =============================================================================
-
-export type VoucherCode = {
-  code: string;
-  used: boolean;
-  usedAt?: string | null;
-};
-
-export type VoucherCodeBatch = {
-  id: string;
-  label?: string;
-  createdAt: string | null;
-  expiresAt?: string | null;
-  prefix?: string | null;
-  length: number;
-  excludeAmbiguous: boolean;
-  ensureGlobalUnique: boolean;
-  count: number;
-  codes: VoucherCode[];
-};
-
-export interface CreateVoucherCodeBatchPayload {
-  userId: string;
-  label?: string;
-  count: number;
-  length: number;
-  prefix?: string;
-  excludeAmbiguous?: boolean;
-  ensureGlobalUnique?: boolean;
-  expiresAt?: string | null;
-}
-
-export async function createVoucherCodeBatch(
-  payload: CreateVoucherCodeBatchPayload,
-  authToken?: string | null,
-): Promise<VoucherCodeBatch> {
-  return apiPost<VoucherCodeBatch>("/voucher-codes", {
-    body: JSON.stringify({ action: "create_batch", ...payload }),
-    authToken: authToken ?? null,
-  });
-}
-
-export async function getVoucherCodeBatches(
-  userId: string,
-  authToken?: string | null,
-): Promise<VoucherCodeBatch[]> {
-  const res = await apiPost<{ batches: VoucherCodeBatch[] }>("/voucher-codes", {
-    body: JSON.stringify({ action: "list_batches", userId }),
-    authToken: authToken ?? null,
-  });
-  return res.batches ?? [];
-}
-
-export interface ToggleVoucherCodeUsedPayload {
-  userId: string;
-  batchId: string;
-  code: string;
-}
-
-export async function toggleVoucherCodeUsed(
-  payload: ToggleVoucherCodeUsedPayload,
-  authToken?: string | null,
-): Promise<VoucherCodeBatch> {
-  return apiPost<VoucherCodeBatch>("/voucher-codes", {
-    body: JSON.stringify({ action: "toggle_used", ...payload }),
-    authToken: authToken ?? null,
-  });
-}

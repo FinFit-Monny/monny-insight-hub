@@ -29,9 +29,6 @@ function toViewModel(data: DashboardResponse | undefined): DashboardViewModel | 
       voucherCode: null,
       uploads: [],
     },
-    unique: {
-      batches: [],
-    },
   };
 
   return {

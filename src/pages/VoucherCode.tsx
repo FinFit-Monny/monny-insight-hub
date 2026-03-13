@@ -21,11 +21,11 @@ const VoucherCode = () => {
 
   const result = useMemo(() => {
     if (uploadFromState) {
-      const { counts, createdAt } = uploadFromState;
+      const { emailCounts, phoneCounts, createdAt } = uploadFromState;
       return {
-        totalValid: counts.totalValid,
-        totalInvalid: counts.totalInvalid,
-        totalDuplicates: counts.totalDuplicates,
+        totalValid: (emailCounts?.totalValid ?? 0) + (phoneCounts?.totalValid ?? 0),
+        totalInvalid: (emailCounts?.totalInvalid ?? 0) + (phoneCounts?.totalInvalid ?? 0),
+        totalDuplicates: (emailCounts?.totalDuplicates ?? 0) + (phoneCounts?.totalDuplicates ?? 0),
         createdAt,
       };
     }

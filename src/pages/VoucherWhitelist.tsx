@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { isValidEmail, parseEmailsFromText, hashEmailSha256 } from "@/lib/email";
+import { looksLikeEmail, looksLikePhone, isValidPhone, normalizePhone, hashPhoneSha256 } from "@/lib/phone";
 import {
   Dialog,
   DialogTrigger,
@@ -32,20 +33,22 @@ const VoucherWhitelist = () => {
   const [pastedText, setPastedText] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [validEmails, setValidEmails] = useState<string[]>([]);
-  const [invalidEmails, setInvalidEmails] = useState<string[]>([]);
-  const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
+  const [validPhones, setValidPhones] = useState<string[]>([]);
+  const [invalidEntries, setInvalidEntries] = useState<string[]>([]);
+  const [duplicateEntries, setDuplicateEntries] = useState<string[]>([]);
   const [isAnonymising, setIsAnonymising] = useState(false);
-  const [hashedPreview, setHashedPreview] = useState<string[]>([]);
+  const [hashedEmailPreview, setHashedEmailPreview] = useState<string[]>([]);
+  const [hashedPhonePreview, setHashedPhonePreview] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const canContinue = useMemo(() => {
-    if (step === 1) return validEmails.length > 0;
+    if (step === 1) return validEmails.length > 0 || validPhones.length > 0;
     if (step === 2) return acceptedDpa;
     return false;
-  }, [step, acceptedDpa, validEmails.length]);
+  }, [step, acceptedDpa, validEmails.length, validPhones.length]);
 
   // Initialize step from query param (?step=1|2)
   useEffect(() => {
@@ -54,31 +57,49 @@ const VoucherWhitelist = () => {
     if (raw === "1") setStep(1);
   }, [searchParams]);
 
-  // When entering step 2, pre-compute a truncated hashed preview of first 8 emails
+  // When entering step 2, pre-compute a truncated hashed preview of first 8 emails and phones
   useEffect(() => {
     let cancelled = false;
     async function computePreview() {
-      if (step !== 2 || validEmails.length === 0) {
-        setHashedPreview([]);
+      if (step !== 2) {
+        setHashedEmailPreview([]);
+        setHashedPhonePreview([]);
         return;
       }
       try {
-        const hashes = await Promise.all(validEmails.slice(0, 8).map((e) => hashEmailSha256(e)));
-        if (!cancelled) {
-          setHashedPreview(hashes.map((h) => `${h.slice(0, 12)}…`));
+        // Compute email hashes
+        if (validEmails.length > 0) {
+          const emailHashes = await Promise.all(validEmails.slice(0, 4).map((e) => hashEmailSha256(e)));
+          if (!cancelled) {
+            setHashedEmailPreview(emailHashes.map((h) => `${h.slice(0, 12)}…`));
+          }
+        } else {
+          if (!cancelled) setHashedEmailPreview([]);
+        }
+        // Compute phone hashes
+        if (validPhones.length > 0) {
+          const phoneHashes = await Promise.all(validPhones.slice(0, 4).map((p) => hashPhoneSha256(p)));
+          if (!cancelled) {
+            setHashedPhonePreview(phoneHashes.map((h) => `${h.slice(0, 12)}…`));
+          }
+        } else {
+          if (!cancelled) setHashedPhonePreview([]);
         }
       } catch {
-        if (!cancelled) setHashedPreview([]);
+        if (!cancelled) {
+          setHashedEmailPreview([]);
+          setHashedPhonePreview([]);
+        }
       }
     }
     computePreview();
     return () => {
       cancelled = true;
     };
-  }, [step, validEmails]);
+  }, [step, validEmails, validPhones]);
 
   const onConfirm = async () => {
-    if (!acceptedDpa || validEmails.length === 0 || !user) return;
+    if (!acceptedDpa || (validEmails.length === 0 && validPhones.length === 0) || !user) return;
     setSubmitError(null);
     setIsSubmitting(true);
     try {
@@ -86,7 +107,8 @@ const VoucherWhitelist = () => {
       const upload = await createVoucherUpload(
         {
           userId: user.id,
-          emails: validEmails,
+          emails: validEmails.length > 0 ? validEmails : undefined,
+          phones: validPhones.length > 0 ? validPhones : undefined,
         },
         token ?? null,
       );
@@ -104,27 +126,56 @@ const VoucherWhitelist = () => {
   };
 
   function parseAndValidate(text: string) {
-    const emails = parseEmailsFromText(text);
-    const seen = new Set<string>();
-    const dups = new Set<string>();
-    const valids: string[] = [];
+    // Split by common delimiters
+    const entries = text
+      .split(/[\n\r,;]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    
+    const seenEmails = new Set<string>();
+    const seenPhones = new Set<string>();
+    const dups: string[] = [];
+    const emails: string[] = [];
+    const phones: string[] = [];
     const invalids: string[] = [];
-    for (const e of emails) {
-      const normalized = e.trim().toLowerCase();
-      if (seen.has(normalized)) {
-        dups.add(normalized);
-        continue;
-      }
-      seen.add(normalized);
-      if (isValidEmail(normalized)) {
-        valids.push(normalized);
+    
+    for (const entry of entries) {
+      if (looksLikeEmail(entry)) {
+        // It's an email
+        const normalized = entry.toLowerCase();
+        if (seenEmails.has(normalized)) {
+          dups.push(normalized);
+          continue;
+        }
+        seenEmails.add(normalized);
+        if (isValidEmail(normalized)) {
+          emails.push(normalized);
+        } else {
+          invalids.push(entry);
+        }
+      } else if (looksLikePhone(entry)) {
+        // It's a phone number
+        const normalized = normalizePhone(entry);
+        if (seenPhones.has(normalized)) {
+          dups.push(entry);
+          continue;
+        }
+        seenPhones.add(normalized);
+        if (isValidPhone(normalized)) {
+          phones.push(normalized);
+        } else {
+          invalids.push(entry);
+        }
       } else {
-        invalids.push(normalized);
+        // Unknown format
+        invalids.push(entry);
       }
     }
-    setValidEmails(valids);
-    setInvalidEmails(invalids);
-    setDuplicateEmails(Array.from(dups));
+    
+    setValidEmails(emails);
+    setValidPhones(phones);
+    setInvalidEntries(invalids);
+    setDuplicateEntries(dups);
   }
 
   function onTextChange(value: string) {
@@ -150,13 +201,18 @@ const VoucherWhitelist = () => {
   }
 
   function onDownloadTemplate() {
-    const header = "email\n";
-    const sample = ["jane.doe@example.com", "john.smith@example.com"].join("\n");
+    const header = "entry\n";
+    const sample = [
+      "jane.doe@example.com",
+      "+31612345678",
+      "john.smith@example.com",
+      "0687654321",
+    ].join("\n");
     const blob = new Blob([header + sample], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "email-whitelist-template.csv";
+    a.download = "whitelist-template.csv";
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -285,7 +341,7 @@ const VoucherWhitelist = () => {
                         <div className="text-sm font-medium truncate">{fileName}</div>
                         <div className="text-xs text-muted-foreground">{t("voucher.step2.fileType")}</div>
                       </div>
-                      <Button variant="ghost" size="icon" className="rounded-full bg-red-500/10 text-red-600 hover:text-red-700 hover:bg-red-500/20" onClick={() => { setFileName(null); setPastedText(""); setValidEmails([]); setInvalidEmails([]); setDuplicateEmails([]); }}>
+                      <Button variant="ghost" size="icon" className="rounded-full bg-red-500/10 text-red-600 hover:text-red-700 hover:bg-red-500/20" onClick={() => { setFileName(null); setPastedText(""); setValidEmails([]); setValidPhones([]); setInvalidEntries([]); setDuplicateEntries([]); }}>
                         <Trash2 className="size-5" />
                       </Button>
                     </div>
@@ -293,10 +349,10 @@ const VoucherWhitelist = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="emails-text">{t("voucher.step2.orPasteLabel")}</Label>
+                  <Label htmlFor="entries-text">{t("voucher.step2.orPasteLabelUnified", "Or paste emails and phone numbers (one per line)")}</Label>
                   <Textarea
-                    id="emails-text"
-                    placeholder={t("voucher.step2.textPlaceholder")}
+                    id="entries-text"
+                    placeholder={t("voucher.step2.textPlaceholderUnified", "jan@company.nl\n+31612345678\nmarie@company.nl\n0687654321")}
                     value={pastedText}
                     onChange={(e) => onTextChange(e.target.value)}
                     className="min-h-[160px]"
@@ -305,12 +361,13 @@ const VoucherWhitelist = () => {
 
                 <div className="rounded-md border p-3 text-sm bg-white">
                   <div className="flex flex-wrap gap-4">
-                    <div>{t("voucher.step2.valid")}: <span className="font-medium">{validEmails.length}</span></div>
-                    <div>{t("voucher.step2.invalid")}: <span className="font-medium">{invalidEmails.length}</span></div>
-                    <div>{t("voucher.step2.duplicates")}: <span className="font-medium">{duplicateEmails.length}</span></div>
+                    <div>{t("voucher.step2.validEmails", "Valid emails")}: <span className="font-medium">{validEmails.length}</span></div>
+                    <div>{t("voucher.step2.validPhones", "Valid phones")}: <span className="font-medium">{validPhones.length}</span></div>
+                    <div>{t("voucher.step2.invalid")}: <span className="font-medium">{invalidEntries.length}</span></div>
+                    <div>{t("voucher.step2.duplicates")}: <span className="font-medium">{duplicateEntries.length}</span></div>
                   </div>
-                  {validEmails.length === 0 && (
-                    <div className="mt-2 text-muted-foreground">{t("voucher.step2.validationHint")}</div>
+                  {validEmails.length === 0 && validPhones.length === 0 && (
+                    <div className="mt-2 text-muted-foreground">{t("voucher.step2.validationHintUnified", "Add at least one valid email or phone number to continue.")}</div>
                   )}
                 </div>
               </div>
@@ -342,19 +399,34 @@ const VoucherWhitelist = () => {
 
                     <div className="rounded-xl border p-4 space-y-3 bg-white">
                       <div className="flex flex-wrap gap-4 text-sm">
-                        <div>{t("voucher.step3.valid")}: <span className="font-medium">{validEmails.length}</span></div>
-                        <div>{t("voucher.step3.invalid")}: <span className="font-medium">{invalidEmails.length}</span></div>
-                        <div>{t("voucher.step3.duplicates")}: <span className="font-medium">{duplicateEmails.length}</span></div>
+                        <div>{t("voucher.step2.validEmails", "Valid emails")}: <span className="font-medium">{validEmails.length}</span></div>
+                        <div>{t("voucher.step2.validPhones", "Valid phones")}: <span className="font-medium">{validPhones.length}</span></div>
+                        <div>{t("voucher.step3.invalid")}: <span className="font-medium">{invalidEntries.length}</span></div>
+                        <div>{t("voucher.step3.duplicates")}: <span className="font-medium">{duplicateEntries.length}</span></div>
                       </div>
-                      <div>
-                        <div className="text-sm font-medium">{t("voucher.step3.previewHashed", "Preview (hashed)")}</div>
-                        <ul className="mt-2 list-disc pl-5 text-sm font-mono">
-                          {hashedPreview.map((h, idx) => (
-                            <li key={`${h}-${idx}`}>{h}</li>
-                          ))}
-                          {hashedPreview.length === 0 && <li className="text-muted-foreground">{t("voucher.step3.noEmails")}</li>}
-                        </ul>
-                      </div>
+                      {hashedEmailPreview.length > 0 && (
+                        <div>
+                          <div className="text-sm font-medium">{t("voucher.step3.previewEmailsHashed", "Email preview (hashed)")}</div>
+                          <ul className="mt-2 list-disc pl-5 text-sm font-mono">
+                            {hashedEmailPreview.map((h, idx) => (
+                              <li key={`email-${h}-${idx}`}>{h}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {hashedPhonePreview.length > 0 && (
+                        <div>
+                          <div className="text-sm font-medium">{t("voucher.step3.previewPhonesHashed", "Phone preview (hashed)")}</div>
+                          <ul className="mt-2 list-disc pl-5 text-sm font-mono">
+                            {hashedPhonePreview.map((h, idx) => (
+                              <li key={`phone-${h}-${idx}`}>{h}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {hashedEmailPreview.length === 0 && hashedPhonePreview.length === 0 && (
+                        <div className="text-muted-foreground">{t("voucher.step3.noEntries", "No valid entries to show.")}</div>
+                      )}
                     </div>
 
                     <div className="rounded-md border p-4 bg-muted/30">
