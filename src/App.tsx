@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionBoundary } from "@/components/session-boundary";
+import { SessionQueries } from "@/providers/SessionQueries";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@/providers/ClerkProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -11,13 +12,12 @@ import VoucherWhitelist from "./pages/VoucherWhitelist";
 import VoucherCode from "./pages/VoucherCode";
 import { useTranslation } from "react-i18next";
 
-const queryClient = new QueryClient();
 
 const App = () => {
   const { t } = useTranslation();
   return (
     <ClerkProvider>
-      <QueryClientProvider client={queryClient}>
+      <SessionBoundary><SessionQueries>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -48,7 +48,7 @@ const App = () => {
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </QueryClientProvider>
+      </SessionQueries></SessionBoundary>
     </ClerkProvider>
   );
 };
